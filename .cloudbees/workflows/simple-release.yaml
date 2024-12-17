@@ -11,7 +11,7 @@ jobs:
         uses: docker://golang:1.20.3-alpine3.17
         shell: sh
         run: |
-          cat << EOF > manifest.yaml
+          cat << EOF | tee manifest.yaml
           [{"component_id":"40e01279-51b0-42a4-8464-26a9c13f0287","branch_name":"main","workflow_file_name":"deploy.yaml","inputs":"{\"environment\":\"pre-prod\",\"name\":\"MyAppFE\",\"version\":\"3.0.0-0.0.2\"}"},{"component_id":"9bd5b564-6f71-49f9-b4fb-047bbab802ed","branch_name":"main","workflow_file_name":"deploy.yaml","inputs":"{\"environment\":\"pre-prod\",\"name\":\"MyAppBE\",\"version\":\"2.0.0-0.0.3\"}"},{"component_id":"9bd5b564-6f71-49f9-b4fb-047bbab802ed","branch_name":"main","workflow_file_name":"deploy.yaml","inputs":"{\"environment\":\"$$ENV$$\",\"name\":\"MyAppFE\",\"version\":\"1.0.0-0.0.1\"}"}]
           EOF
       - name: deploy
