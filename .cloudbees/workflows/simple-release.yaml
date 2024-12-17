@@ -1,0 +1,25 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: workflow
+name: Simple Release
+on:
+  push:
+    branches:
+      - "**"
+jobs:
+  setup:
+    steps:
+      - name: Create manifest
+        uses: docker://golang:1.20.3-alpine3.17
+        shell: sh
+        run: |
+          cat << EOF > manifest.yaml
+          
+          EOF
+  pre-prod:
+    needs: setup
+    steps:
+      - name: deploy
+        uses: cloudbees-io/workflows-dispatch
+        with:
+          workflows-dispatch-file: manifest.yaml
+          token: ${{ secrets.PAT}}
