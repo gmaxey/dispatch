@@ -12,7 +12,7 @@ jobs:
   pre-prod:
     steps:
       - name: Create manifest
-        uses: docker://rancher/curlimages-curl
+        uses: docker://ricsanfre/docker-curl-jq
         shell: sh
         run: |
           COMPONENT_IDS="${{ inputs.componentIds }}"
