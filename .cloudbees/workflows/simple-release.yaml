@@ -12,7 +12,7 @@ jobs:
   pre-prod:
     steps:
       - name: Create manifest
-        uses: docker://figured/alpine-curl-jq-bash
+        uses: docker://pascaliske/alpine-curl-jq
         shell: bash
         run: |
           COMPONENT_IDS="${{ inputs.componentIds }}"
