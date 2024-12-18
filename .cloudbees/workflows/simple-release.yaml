@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Create manifest
         uses: figured/alpine-curl-jq-bash
-        shell: sh
+        shell: bash
         run: |
           COMPONENT_IDS="${{ inputs.componentIds }}"
           # Once available, the component ids will come from the application model through an API call
