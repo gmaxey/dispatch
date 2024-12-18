@@ -12,7 +12,7 @@ jobs:
   pre-prod:
     steps:
       - name: Create manifest
-        uses: docker://esolang/jq:latest
+        uses: docker://020229604682.dkr.ecr.us-east-1.amazonaws.com/actions/workflow-dispatch-actions:main-3443452e9014c784dfc6670bca8992274910402c
         shell: sh
         run: |
           COMPONENT_IDS="${{ inputs.componentIds }}"
