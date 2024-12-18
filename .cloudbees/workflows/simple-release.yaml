@@ -12,7 +12,7 @@ jobs:
   pre-prod:
     steps:
       - name: Create manifest
-        uses: docker://ricsanfre/docker-curl-jq
+        uses: docker://esolang/jq:latest
         shell: sh
         run: |
           COMPONENT_IDS="${{ inputs.componentIds }}"
