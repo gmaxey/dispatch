@@ -12,7 +12,7 @@ jobs:
   pre-prod:
     steps:
       - name: Create manifest
-        uses: docker://golang:1.20.3-alpine3.17
+        uses: docker://alpine/curl
         shell: sh
         run: |
           COMPONENT_IDS="${{ inputs.componentIds }}"
