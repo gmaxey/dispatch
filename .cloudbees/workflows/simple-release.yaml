@@ -3,19 +3,33 @@ kind: workflow
 name: Simple Release
 on:
   workflow_dispatch:
+    inputs:
+      componentIds:
+        type: string
+        default: 40e01279-51b0-42a4-8464-26a9c13f0287 9bd5b564-6f71-49f9-b4fb-047bbab802ed
+        required: true
 jobs:
   pre-prod:
     steps:
       - name: Create manifest
-        # This really should be in a separate job, but no file sharing between jobs
         uses: docker://golang:1.20.3-alpine3.17
         shell: sh
         run: |
-          cat << EOF | tee manifest.yaml
-          [{"component_id":"40e01279-51b0-42a4-8464-26a9c13f0287","branch_name":"main","workflow_file_name":"deploy.yaml","inputs":{"environment":"pre-prod","artifactName":"MyAppFE","artifactVersion":"3.0.0-0.0.2"}},{"component_id":"9bd5b564-6f71-49f9-b4fb-047bbab802ed","branch_name":"main","workflow_file_name":"deploy.yaml","inputs":{"environment":"pre-prod","artifactName":"MyAppBE","artifactVersion":"2.0.0-0.0.3"}}]
-          EOF
-          echo
-          cat manifest.yaml
+          COMPONENT_IDS="${{ inputs.componentIds }}"
+          # Once available, the component ids will come from the application model through an API call
+          MANIFEST="[]" # workflow-dispatch action input
+          for COMPONENT_ID in $COMPONENT_IDS
+          do 
+            artifacts=$(curl -X 'GET' https://api.saas-preprod.beescloud.com/v2/resources/$COMPONENT_ID/artifactinfos?filter.latestOnly=true    --header 'Content-Type: application/json'       --header 'Authorization: Bearer cb_api_0IkBCObCqQPEY6y1tiQ/ja/5dMLspjrLpZV4c8UGYR2uNJ6FjjKHzZvMP8laO6bEoI1neMz4TFEW4IdCQFPauQ==' | jq -c '.artifacts[]')
+            # Process each artifact
+            for artifact in $artifacts;
+            do
+              manifest_entry=$(echo $artifact |\
+              jq -c '{component_id: .resourceId, branch_name: "main", workflow_file_name: "deploy.yaml", inputs: {artifactName: .name, artifactVersion: .version, environment: "pre-prod"} }' )
+              MANIFEST=$(echo $MANIFEST | jq -c '.[]' | jq -c -s --argjson b "${manifest_entry}" '.[. | length] = $b')
+            done
+          done
+          echo $MANIFEST | tee manifest.yaml
       - name: deploy
         uses: cloudbees-io/workflows-dispatch
         with:
