@@ -24,12 +24,12 @@ jobs:
             # Process each artifact
             for artifact in $artifacts;
             do
-              manifest_entry=$(echo $artifact |\
+              manifest_entry=$(echo "$artifact" |\
               jq -c '{component_id: .resourceId, branch_name: "main", workflow_file_name: "deploy.yaml", inputs: {artifactName: .name, artifactVersion: .version, environment: "pre-prod"} }' )
-              MANIFEST=$(echo $MANIFEST | jq -c '.[]' | jq -c -s --argjson b "${manifest_entry}" '.[. | length] = $b')
+              MANIFEST=$(echo "$MANIFEST" | jq -c '.[]' | jq -c -s --argjson b "${manifest_entry}" '.[. | length] = $b')
             done
           done
-          echo $MANIFEST | tee manifest.yaml
+          echo "$MANIFEST" | tee manifest.yaml
       - name: deploy
         uses: cloudbees-io/workflows-dispatch
         with:
